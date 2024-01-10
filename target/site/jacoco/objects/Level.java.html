@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Level.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">parkin-jam</a> &gt; <a href="index.source.html" class="el_package">objects</a> &gt; <span class="el_source">Level.java</span></div><h1>Level.java</h1><pre class="source lang-java linenums">package objects;
+
+import java.util.*;
+import java.io.Serializable;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+public class Level implements Serializable {
+
+	private Panel panel;
+	private int numMoves;
+	private Box boxWin;
+	private int num;
+	private int punctua;
+	private int globalPunctua;
+	private String path;
+
+<span class="fc" id="L19">	public Level(String path, int num, int punctua, int globalPunctua) throws FileNotFoundException {</span>
+<span class="fc" id="L20">		this.path = path;</span>
+<span class="fc" id="L21">		this.num = num;</span>
+<span class="fc" id="L22">		this.punctua = punctua;</span>
+<span class="fc" id="L23">		this.globalPunctua = globalPunctua;</span>
+<span class="fc" id="L24">		panel = loadBoard(path);</span>
+<span class="fc" id="L25">	}</span>
+
+	public final Panel loadBoard(String path) throws FileNotFoundException {
+
+<span class="fc" id="L29">		File level = new File(path);</span>
+<span class="fc" id="L30">		boolean exit = false;</span>
+<span class="fc" id="L31">		boolean auto = false;</span>
+<span class="fc" id="L32">		boolean truck = false;</span>
+<span class="fc" id="L33">		boolean mycar = false;</span>
+<span class="fc" id="L34">		boolean mycarAdd = false;</span>
+<span class="fc" id="L35">		List&lt;Character&gt; list = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L37">		try (Scanner sc = new Scanner(level)) {</span>
+<span class="fc" id="L38">			sc.nextLine();</span>
+<span class="fc" id="L39">			int rows = sc.nextInt() - 2;</span>
+<span class="fc" id="L40">			int cols = sc.nextInt() - 2;</span>
+<span class="fc" id="L41">			sc.nextLine(); // this is for skipping the first line</span>
+<span class="fc" id="L42">			Panel panel2 = new Panel(rows, cols);</span>
+<span class="pc bpc" id="L43" title="1 of 4 branches missed.">			for (int i = 0; sc.hasNextLine() &amp;&amp; (i &lt; rows+1); i++) {</span>
+<span class="fc" id="L44">				String line = sc.nextLine();</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">				for (int j = 0; j &lt; line.length(); j++) {</span>
+<span class="fc" id="L46">					char c = line.charAt(j);</span>
+<span class="fc" id="L47">					int representacion = c;</span>
+
+<span class="fc bfc" id="L49" title="All 2 branches covered.">					if(c == '@') {</span>
+<span class="fc" id="L50">						exit = true;</span>
+<span class="fc" id="L51">					}</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">					else if (c =='*') {</span>
+<span class="fc" id="L53">						mycar = true;</span>
+<span class="fc" id="L54">					}</span>
+<span class="fc bfc" id="L55" title="All 6 branches covered.">					else if (!list.contains(c) &amp;&amp; representacion &gt;= 97 &amp;&amp; representacion &lt;= 114) {</span>
+<span class="fc" id="L56">						auto = true;</span>
+<span class="fc" id="L57">					}</span>
+<span class="pc bpc" id="L58" title="1 of 6 branches missed.">					else if(!list.contains(c) &amp;&amp; representacion &gt;=115 &amp;&amp; representacion &lt;= 122) {</span>
+<span class="fc" id="L59">						truck = true;</span>
+					}
+
+<span class="fc bfc" id="L62" title="All 4 branches covered.">					if(mycar &amp;&amp; !mycarAdd) {</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">						if(line.charAt(j+1) == '*') {</span>
+<span class="fc" id="L64">							panel2.addVehicle(VehicleModel.MYCAR, i-1, j-1, 2, false);</span>
+<span class="fc" id="L65">						}</span>
+						else {
+<span class="nc" id="L67">							panel2.addVehicle(VehicleModel.MYCAR, i-1, j-1, 2, true);</span>
+						}
+<span class="fc" id="L69">						mycarAdd = true;</span>
+					}
+<span class="fc bfc" id="L71" title="All 2 branches covered.">					if(auto) {</span>
+<span class="pc bpc" id="L72" title="1 of 4 branches missed.">						if(j != line.length()-1 &amp;&amp; line.charAt(j+1) == c) {</span>
+<span class="fc" id="L73">							panel2.addVehicle(VehicleModel.AUTO, i-1, j-1, 2, false);</span>
+<span class="fc" id="L74">						}</span>
+						else {
+<span class="fc" id="L76">							panel2.addVehicle(VehicleModel.AUTO, i-1, j-1, 2, true);</span>
+						}
+<span class="fc" id="L78">						list.add(c);</span>
+<span class="fc" id="L79">						auto = false;</span>
+
+					}
+<span class="fc bfc" id="L82" title="All 2 branches covered.">					if (truck) {</span>
+
+<span class="pc bpc" id="L84" title="1 of 4 branches missed.">						if(j != line.length()-1 &amp;&amp; line.charAt(j+1) == c) {</span>
+<span class="fc" id="L85">							panel2.addVehicle(VehicleModel.TRUCK, i-1, j-1, 3, false);</span>
+<span class="fc" id="L86">						}</span>
+						else {
+<span class="fc" id="L88">							panel2.addVehicle(VehicleModel.TRUCK, i-1, j-1, 3, true);</span>
+
+						}
+<span class="fc" id="L91">						list.add(c);</span>
+<span class="fc" id="L92">						truck = false;</span>
+					}
+<span class="fc bfc" id="L94" title="All 2 branches covered.">					if (exit) {</span>
+<span class="fc" id="L95">						boxWin = new Box(i-1,j-2);</span>
+<span class="fc" id="L96">						exit = false;</span>
+					}
+				}
+			}
+<span class="fc" id="L100">			numMoves = 0;</span>
+<span class="fc" id="L101">			return panel2;</span>
+		} 
+	}
+
+	public int getColumns() {
+<span class="fc" id="L106">		return panel.getNumCols();</span>
+	}
+
+	public int getRows() {
+<span class="fc" id="L110">		return panel.getNumRows();</span>
+	}
+
+	public int getNumMoves() {
+<span class="fc" id="L114">		return numMoves;</span>
+	}
+
+	public int getNum() {
+<span class="fc" id="L118">		return num;</span>
+	}
+
+	public void incrementMoves() {
+<span class="fc" id="L122">		numMoves++;</span>
+<span class="fc" id="L123">	}</span>
+
+	public Vehicle getVehicle(Box space) {
+<span class="fc" id="L126">		return panel.getVehicle(space);</span>
+	}
+
+
+	public boolean moveBoxes(Box space, int numSpaces) {
+<span class="fc bfc" id="L131" title="All 2 branches covered.">		if(panel.possibleMoveBoxes(space,numSpaces)) {</span>
+<span class="fc" id="L132">			panel.moveBoxes(space, numSpaces);</span>
+<span class="fc" id="L133">			numMoves++;</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">			if (numSpaces == 0)</span>
+<span class="fc" id="L135">				numMoves--;</span>
+<span class="fc" id="L136">			return true;</span>
+		}
+<span class="fc" id="L138">		return false;</span>
+	}
+
+	public List&lt;Vehicle&gt; getVehiclesOnPanel() {
+<span class="fc" id="L142">		return panel.getVehicleOnPanel();</span>
+	}
+
+	public void setVehiclesOnPanel(List&lt;Vehicle&gt; l) {
+<span class="fc" id="L146">		panel.setVehicleOnPanel(l);</span>
+<span class="fc" id="L147">	}</span>
+
+	public boolean carwin() {
+<span class="fc" id="L150">		boolean res = false;</span>
+<span class="fc" id="L151">		Vehicle veh = panel.getVehicle(boxWin);</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">		if(veh == null) {</span>
+<span class="nc" id="L153">			return res;	</span>
+		}
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">		if(veh.getVehicleModel() == VehicleModel.MYCAR) {</span>
+<span class="nc" id="L156">			res = true;</span>
+		}
+<span class="fc" id="L158">		return res;</span>
+	}
+
+	public int getPunctua() {
+<span class="fc" id="L162">		return punctua;</span>
+	}
+
+	public void setPunctua(int punctua) {
+<span class="fc" id="L166">		this.punctua = punctua;</span>
+<span class="fc" id="L167">	}</span>
+
+	public int getGlobalPunctua() {
+<span class="fc" id="L170">		return globalPunctua;</span>
+	}
+
+	public void setGlobalPunctua(int globalPunctua) {
+<span class="fc" id="L174">		this.globalPunctua = globalPunctua;</span>
+<span class="fc" id="L175">	}</span>
+
+	public String getPath() {
+<span class="fc" id="L178">		return path;</span>
+	}
+
+	public void setPath(String path) {
+<span class="fc" id="L182">		this.path = path;</span>
+<span class="fc" id="L183">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

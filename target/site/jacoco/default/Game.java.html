@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Game.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">parkin-jam</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Game.java</span></div><h1>Game.java</h1><pre class="source lang-java linenums">
+import java.awt.event.MouseEvent;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+
+import java.io.FileInputStream;
+
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+
+import java.io.File;
+
+import acm.graphics.*;
+import acm.program.GraphicsProgram;
+import objects.*;
+
+<span class="fc" id="L21">public class Game extends GraphicsProgram {</span>
+
+<span class="fc" id="L23">	public static final String DIRWORK = System.getProperty(&quot;user.dir&quot;);</span>
+<span class="fc" id="L24">	public static final String PATH = DIRWORK + &quot;\\src\\main\\resources\\images\\&quot;;</span>
+<span class="fc" id="L25">	public static final String LEVELPATH =  DIRWORK + &quot;\\src\\main\\resources\\levels\\&quot;;</span>
+
+<span class="fc" id="L27">	File levelsFolder = new File(LEVELPATH);</span>
+<span class="fc" id="L28">	File[] lista = levelsFolder.listFiles();</span>
+<span class="fc" id="L29">	int nlevels = lista.length;</span>
+
+	public static final int WIDTH = 600;
+	public static final int HEIGHT = 600;
+
+	public static final String ARIA = &quot;Berlin Sans FB Demi-35&quot;;
+	public static final String GREY = &quot;grey_button.png&quot;;
+	public static final String BLUE = &quot;blue_button.png&quot;;
+	public static final String LP =&quot;Level Points: &quot;;
+
+	double iniX;
+	double iniY;
+
+	double prevX;
+	double prevY;
+
+	double xx;
+	double yy;
+
+<span class="fc" id="L48">	Deque&lt;ArrayList&lt;Vehicle&gt;&gt; movesDeque = new ArrayDeque&lt;&gt;();</span>
+
+	static Level lvl;
+	String vehN;
+	ArrayList&lt;Vehicle&gt; listVeh;
+	GObject obj;
+	Vehicle selectedVeh;
+	GLabel punctua;
+	GLabel moves;
+	GLabel punctuaGlobal;
+
+<span class="fc" id="L59">	int punct = 100;</span>
+<span class="fc" id="L60">	int globalPunct = 0;</span>
+<span class="fc" id="L61">	int globalPunctAux = 0;</span>
+<span class="fc" id="L62">	static int level = 1;</span>
+
+	GImage imgPlay;
+	GImage imgExit;
+	GImage imgLoad;
+
+	GImage save;
+	GImage undo;
+	GImage imgReset;
+	GImage restart;
+
+	GLabel play;
+	GLabel exit;
+	GLabel win;
+	GLabel load;
+
+	GImage dog;
+
+	GLabel nameLevel;
+
+	GImage backgroundImage;
+	GImage backgroundGrey;
+
+	GImage tittle;
+
+	@Override
+	public void init() {
+<span class="fc" id="L89">		setSize(WIDTH+100, HEIGHT+100);</span>
+<span class="fc" id="L90">	}</span>
+
+	public void run() {
+<span class="fc" id="L93">		menu();</span>
+<span class="fc" id="L94">		addMouseListeners();</span>
+<span class="fc" id="L95">	}</span>
+
+	void setBackGround() {
+<span class="fc" id="L98">		backgroundImage = new GImage(PATH + &quot;fondo.jpg&quot;);</span>
+<span class="fc" id="L99">		backgroundGrey = new GImage(PATH + &quot;greyOnly.jpg&quot;);</span>
+
+<span class="fc" id="L101">		backgroundImage.setSize(WIDTH-20.0, HEIGHT-20.0);</span>
+<span class="fc" id="L102">		backgroundImage.setLocation(-30, -30);</span>
+<span class="fc" id="L103">		backgroundGrey.setSize(WIDTH+100.0, HEIGHT+100.0);</span>
+
+<span class="fc" id="L105">		add(backgroundGrey);</span>
+<span class="fc" id="L106">		add(backgroundImage);</span>
+<span class="fc" id="L107">	}</span>
+
+
+	public void runLvl() throws FileNotFoundException {
+<span class="fc" id="L111">		removeAll();</span>
+<span class="fc" id="L112">		setBackGround();</span>
+<span class="fc" id="L113">		lvl = new Level(LEVELPATH + &quot;level_&quot;+level+&quot;.txt&quot;, level, punct, globalPunct);</span>
+<span class="fc" id="L114">		drawCars();</span>
+<span class="fc" id="L115">		hud();</span>
+<span class="fc" id="L116">	}</span>
+
+	public void runLoadLvl(int levelL, int punctL, int globalPunctL) {
+
+<span class="fc" id="L120">		globalPunctAux = globalPunctL;</span>
+<span class="fc" id="L121">		level = levelL;</span>
+<span class="fc" id="L122">		punct = punctL;</span>
+<span class="fc" id="L123">		globalPunct = globalPunctL;</span>
+<span class="fc" id="L124">		setBackGround();</span>
+<span class="fc" id="L125">		drawCars();</span>
+<span class="fc" id="L126">		hud();</span>
+<span class="fc" id="L127">	}</span>
+
+	public void runWin() {
+<span class="fc" id="L130">		winSlide();</span>
+<span class="fc" id="L131">	}</span>
+
+	public void hud() {
+<span class="fc" id="L134">		punctuation();</span>
+
+		// reset
+<span class="fc" id="L137">		imgReset = new GImage(PATH + &quot;reset.png&quot;);</span>
+<span class="fc" id="L138">		imgReset.setSize(75, 75);</span>
+<span class="fc" id="L139">		imgReset.setLocation(600, HEIGHT - 550.0);</span>
+<span class="fc" id="L140">		add(imgReset);</span>
+
+		// undo
+<span class="fc" id="L143">		undo = new GImage(PATH + &quot;undo.png&quot;);</span>
+<span class="fc" id="L144">		undo.setSize(119, 60);</span>
+<span class="fc" id="L145">		undo.setLocation(575, HEIGHT - 450.0);</span>
+<span class="fc" id="L146">		add(undo);</span>
+
+		// save
+<span class="fc" id="L149">		save = new GImage(PATH + &quot;save.png&quot;);</span>
+<span class="fc" id="L150">		save.setSize(119, 60);</span>
+<span class="fc" id="L151">		save.setLocation(575, HEIGHT - 350.0);</span>
+<span class="fc" id="L152">		add(save);</span>
+
+		// restart game
+<span class="fc" id="L155">		restart = new GImage(PATH + &quot;restart.png&quot;);</span>
+<span class="fc" id="L156">		restart.setSize(119, 60);</span>
+<span class="fc" id="L157">		restart.setLocation(575, HEIGHT - 250.0);</span>
+<span class="fc" id="L158">		add(restart);</span>
+
+<span class="fc" id="L160">		nameLevel = new GLabel(&quot;Level &quot; + level, 65 ,615);</span>
+<span class="fc" id="L161">		nameLevel.setFont(&quot;Berlin Sans FB Demi-50&quot;);</span>
+
+<span class="fc" id="L163">		add(nameLevel);</span>
+
+<span class="fc" id="L165">	}</span>
+
+	public final void saveGame() throws IOException{
+<span class="fc" id="L168">		ObjectOutputStream escritor = new ObjectOutputStream(new FileOutputStream(DIRWORK + &quot;\\src\\main\\resources\\saved\\saved.bin&quot;));</span>
+		try {
+<span class="fc" id="L170">			escritor.writeObject(lvl);</span>
+			
+<span class="pc" id="L172">		} catch (IOException e) {</span>
+		}
+		finally {
+<span class="fc" id="L175">			escritor.close();</span>
+		}
+<span class="fc" id="L177">	}</span>
+
+	public final void loadGame() throws IOException{
+<span class="fc" id="L180">		ObjectInputStream lector = new ObjectInputStream(new FileInputStream(DIRWORK + &quot;\\src\\main\\resources\\saved\\saved.bin&quot;));</span>
+
+		try {
+<span class="fc" id="L183">			lvl = (Level) lector.readObject();</span>
+<span class="fc" id="L184">			removeAll();</span>
+<span class="fc" id="L185">			runLoadLvl(lvl.getNum(), lvl.getPunctua(), lvl.getGlobalPunctua());</span>
+<span class="fc" id="L186">		}</span>
+<span class="nc" id="L187">		catch (IOException | ClassNotFoundException e) {} </span>
+		finally {
+<span class="fc" id="L189">			lector.close();</span>
+		}
+<span class="fc" id="L191">	}</span>
+
+	double boxWid() {
+<span class="fc" id="L194">		return (WIDTH-100.0) / lvl.getColumns();</span>
+	}
+
+	double boxHei() {
+<span class="fc" id="L198">		return (HEIGHT-100.0) / lvl.getRows();</span>
+	}
+
+	private int calculateBox(double initialX, double initialY, double finalX, double finalY, Vehicle veh) {
+<span class="fc" id="L202">		double numMoveY = finalY - initialY;</span>
+<span class="fc" id="L203">		double numMoveX = finalX - initialX;</span>
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">		if (veh != null) {</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">			if (veh.isVertical())</span>
+<span class="fc" id="L206">				return (int)(numMoveY / (boxHei() - 5));</span>
+			else
+<span class="nc" id="L208">				return (int)(numMoveX / (boxWid() - 5));</span>
+		}
+<span class="nc" id="L210">		return 0;</span>
+	}
+
+	Box boxSpa(double x, double y) {
+<span class="nc" id="L214">		return new Box((int)(y / boxHei()), (int)(x / boxWid()));</span>
+	}
+
+	private double getIniX(Vehicle veh) {
+<span class="fc" id="L218">		return veh.getStartCol() * boxWid();</span>
+	}
+
+	private double getIniY(Vehicle veh) {
+<span class="fc" id="L222">		return veh.getStartRow() * boxHei();</span>
+	}
+
+	Vehicle getBoxVeh(double x, double y) {
+<span class="nc" id="L226">		Box s = boxSpa(x,y);</span>
+<span class="nc" id="L227">		return lvl.getVehicle(s);</span>
+	}
+
+	public void handleMousePressed (double iniX2, double iniY2) throws IOException {
+<span class="fc" id="L231">		obj = getElementAt(iniX2, iniY2);</span>
+<span class="fc bfc" id="L232" title="All 4 branches covered.">		if (obj == imgPlay || obj == play) {</span>
+			try {
+<span class="fc" id="L234">				runLvl();</span>
+<span class="pc" id="L235">			} catch (FileNotFoundException e1) {</span>
+<span class="nc" id="L236">			}}</span>
+<span class="pc bpc" id="L237" title="2 of 4 branches missed.">		else if (obj == imgExit || obj == exit) {</span>
+<span class="nc" id="L238">			System.exit(0); }</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">		else if (obj == imgReset) {</span>
+			try {
+<span class="fc" id="L241">				resetLevel();</span>
+<span class="pc" id="L242">			} catch (FileNotFoundException e1) {</span>
+<span class="nc" id="L243">			}}</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">		else if (obj == undo) {</span>
+<span class="fc" id="L245">			undo();</span>
+<span class="fc" id="L246">		}</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">		else if (obj == restart) {</span>
+			try {
+<span class="fc" id="L249">				restartGame();</span>
+<span class="pc" id="L250">			} catch (FileNotFoundException e1) {</span>
+<span class="nc" id="L251">			}}</span>
+<span class="fc bfc" id="L252" title="All 2 branches covered.">		else if (obj == save) {</span>
+<span class="fc" id="L253">			saveGame();</span>
+<span class="fc" id="L254">		}</span>
+<span class="pc bpc" id="L255" title="1 of 4 branches missed.">		else if (obj == load || obj == imgLoad) {</span>
+<span class="fc" id="L256">			loadGame();</span>
+<span class="fc" id="L257">		}</span>
+<span class="nc bnc" id="L258" title="All 2 branches missed.">		else if(isVehicle()) {</span>
+<span class="nc" id="L259">			selectedVeh = getBoxVeh(iniX2,iniY2);</span>
+		}
+<span class="fc" id="L261">	}</span>
+
+	private boolean isVehicle() {
+<span class="nc bnc" id="L264" title="All 24 branches missed.">		return (obj instanceof GImage) &amp;&amp;  obj != imgExit &amp;&amp; obj != backgroundImage &amp;&amp; obj != restart &amp;&amp; obj != load &amp;&amp; obj != imgLoad &amp;&amp; obj != imgPlay &amp;&amp; obj != imgReset &amp;&amp; obj != undo &amp;&amp; obj != save &amp;&amp; obj != backgroundGrey &amp;&amp; obj != tittle;</span>
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+<span class="nc" id="L269">		iniX = e.getX(); iniY = e.getY(); prevX = e.getX(); prevY = e.getY();</span>
+		try {
+<span class="nc" id="L271">			handleMousePressed(iniX, iniY);</span>
+<span class="nc" id="L272">		} catch (IOException e1) {</span>
+<span class="nc" id="L273">		}}</span>
+
+	public void undo() {
+<span class="fc bfc" id="L276" title="All 2 branches covered.">		if (!movesDeque.isEmpty()) {</span>
+<span class="fc" id="L277">			ArrayList&lt;Vehicle&gt; l = movesDeque.pop();</span>
+<span class="fc" id="L278">			clear();</span>
+<span class="fc" id="L279">			lvl.setVehiclesOnPanel(l);</span>
+<span class="fc" id="L280">			runLoadLvl(level, punct, globalPunct);</span>
+		}
+<span class="fc" id="L282">	}</span>
+
+	public void resetLevel() throws FileNotFoundException {
+<span class="fc" id="L285">		clear();</span>
+<span class="fc" id="L286">		punct = 100;</span>
+<span class="fc" id="L287">		runLvl();</span>
+<span class="fc" id="L288">	}</span>
+
+	public void restartGame () throws FileNotFoundException {
+<span class="fc" id="L291">		clear();</span>
+<span class="fc" id="L292">		punct = 100;</span>
+<span class="fc" id="L293">		level = 1;</span>
+<span class="fc" id="L294">		runLvl();</span>
+<span class="fc" id="L295">	}</span>
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+<span class="nc bnc" id="L299" title="All 2 branches missed.">		if (obj instanceof GLabel)</span>
+<span class="nc" id="L300">			return;</span>
+<span class="nc bnc" id="L301" title="All 2 branches missed.">		if (isVehicle()) {</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">			if(selectedVeh.isVertical()) {</span>
+<span class="nc" id="L303">				obj.move(0, e.getY() - prevY);</span>
+<span class="nc" id="L304">				prevY = e.getY();</span>
+<span class="nc" id="L305">			}</span>
+			else {
+<span class="nc" id="L307">				obj.move(e.getX() - prevX, 0);</span>
+<span class="nc" id="L308">				prevX = e.getX();</span>
+			}
+		}
+<span class="nc" id="L311">	}</span>
+
+	public void handleMouseReleased(double x, double y) {
+<span class="fc" id="L314">		int boxes = calculateBox(iniX, iniY, x, y, selectedVeh);</span>
+
+<span class="pc bpc" id="L316" title="1 of 2 branches missed.">		if (!lvl.moveBoxes(selectedVeh.getStart(), boxes)) {</span>
+<span class="nc" id="L317">			obj.setLocation(getIniX(selectedVeh), getIniY(selectedVeh));</span>
+<span class="nc" id="L318">		} else {</span>
+<span class="fc" id="L319">			obj.setLocation(getIniX(selectedVeh), getIniY(selectedVeh));</span>
+<span class="fc" id="L320">			movesDeque.push((ArrayList&lt;Vehicle&gt;) lvl.getVehiclesOnPanel());</span>
+<span class="pc bpc" id="L321" title="1 of 2 branches missed.">			if (lvl.getNumMoves() &lt; 10 ) {</span>
+<span class="fc" id="L322">				punct = punct - 1;</span>
+<span class="fc" id="L323">				punctua.setLabel(LP+punct);</span>
+<span class="pc bnc" id="L324" title="All 4 branches missed.">			} else if ((lvl.getNumMoves() &gt;= 10 &amp;&amp; lvl.getNumMoves() &lt; 20)) {</span>
+<span class="nc" id="L325">				punct = punct - 2;</span>
+<span class="nc" id="L326">				punctua.setLabel(LP+punct);</span>
+<span class="nc bnc" id="L327" title="All 2 branches missed.">			} else if (lvl.getNumMoves() &gt;= 21 ) {</span>
+<span class="nc" id="L328">				punct = punct - 4;</span>
+<span class="nc" id="L329">				punctua.setLabel(LP+punct);</span>
+			}
+<span class="fc" id="L331">			moves.setLabel(&quot;Moves: &quot;+lvl.getNumMoves());</span>
+<span class="fc" id="L332">			lvl.setPunctua(punct);</span>
+<span class="fc" id="L333">			levelPassed();</span>
+		}
+<span class="fc" id="L335">	}</span>
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+<span class="nc bnc" id="L339" title="All 2 branches missed.">		if (obj instanceof GLabel)</span>
+<span class="nc" id="L340">			return;</span>
+<span class="nc bnc" id="L341" title="All 4 branches missed.">		if (obj != null &amp;&amp; isVehicle()) {</span>
+<span class="nc" id="L342">			double x = e.getX();</span>
+<span class="nc" id="L343">			double y = e.getY();</span>
+<span class="nc" id="L344">			handleMouseReleased(x, y);</span>
+		}
+<span class="nc" id="L346">	}</span>
+
+
+	public void handleMouseMove(double xx, double yy) {
+<span class="fc bfc" id="L350" title="All 4 branches covered.">		if(getElementAt(xx, yy) == imgPlay || getElementAt(xx, yy) == play) {</span>
+
+<span class="fc" id="L352">			imgPlay.setImage(PATH+ BLUE);</span>
+<span class="fc" id="L353">			imgPlay.setSize(150, 75);</span>
+		}
+<span class="fc bfc" id="L355" title="All 4 branches covered.">		if(getElementAt(xx, yy) == imgExit || getElementAt(xx, yy) == exit) {</span>
+
+<span class="fc" id="L357">			imgExit.setImage(PATH+BLUE);</span>
+<span class="fc" id="L358">			imgExit.setSize(150, 75);</span>
+		}
+<span class="fc bfc" id="L360" title="All 4 branches covered.">		if(getElementAt(xx, yy) == imgLoad || getElementAt(xx, yy) == load) {</span>
+
+<span class="fc" id="L362">			imgLoad.setImage(PATH+BLUE);</span>
+<span class="fc" id="L363">			imgLoad.setSize(150, 75);</span>
+		}
+
+<span class="fc bfc" id="L366" title="All 4 branches covered.">		if(getElementAt(xx,yy) != imgExit &amp;&amp; getElementAt(xx, yy) != exit ) {</span>
+
+<span class="fc" id="L368">			imgExit.setImage(PATH+ GREY);</span>
+<span class="fc" id="L369">			imgExit.setSize(150, 75);</span>
+		}
+
+<span class="fc bfc" id="L372" title="All 4 branches covered.">		if(getElementAt(xx,yy) != imgPlay &amp;&amp; getElementAt(xx, yy) != play) {</span>
+<span class="fc" id="L373">			imgPlay.setImage(PATH+ GREY);</span>
+<span class="fc" id="L374">			imgPlay.setSize(150, 75);</span>
+		}
+
+<span class="fc bfc" id="L377" title="All 4 branches covered.">		if(getElementAt(xx,yy) != imgLoad &amp;&amp; getElementAt(xx, yy) != load) {</span>
+<span class="fc" id="L378">			imgLoad.setImage(PATH+ GREY);</span>
+<span class="fc" id="L379">			imgLoad.setSize(150, 75);</span>
+		}
+<span class="fc" id="L381">	}</span>
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+<span class="nc" id="L385">		handleMouseMove(e.getX(),  e.getY());}</span>
+
+	private void drawCars() {
+<span class="fc" id="L388">		listVeh = (ArrayList&lt;Vehicle&gt;) lvl.getVehiclesOnPanel();</span>
+<span class="fc bfc" id="L389" title="All 2 branches covered.">		for (int i = 0; i &lt; listVeh.size(); i++) {</span>
+<span class="fc" id="L390">			drawCar(listVeh.get(i));</span>
+		}
+<span class="fc" id="L392">	}</span>
+
+	private void punctuation() {
+<span class="fc" id="L395">		punctuaGlobal = new GLabel(&quot;Global Points: &quot;+globalPunctAux,325,665);</span>
+<span class="fc" id="L396">		punctuaGlobal.setFont(ARIA);</span>
+<span class="fc" id="L397">		add(punctuaGlobal);</span>
+
+<span class="fc" id="L399">		punctua = new GLabel(LP+ punct,325,615);</span>
+<span class="fc" id="L400">		punctua.setFont(ARIA);</span>
+<span class="fc" id="L401">		add(punctua);</span>
+
+<span class="fc" id="L403">		moves = new GLabel(&quot;Moves: &quot;+0,325,565);</span>
+<span class="fc" id="L404">		moves.setFont(ARIA);</span>
+<span class="fc" id="L405">		add(moves);</span>
+<span class="fc" id="L406">	}</span>
+
+	void handleLevelpassed() {
+<span class="fc" id="L409">		removeAll();</span>
+
+<span class="fc" id="L411">		int aux = punct;</span>
+
+<span class="fc" id="L413">		backgroundGrey = new GImage(PATH + &quot;grey.jpg&quot;);</span>
+<span class="fc" id="L414">		backgroundGrey.setSize(WIDTH+100.0, HEIGHT+100.0);</span>
+<span class="fc" id="L415">		backgroundGrey.sendToBack();</span>
+<span class="fc" id="L416">		add(backgroundGrey);</span>
+
+<span class="fc" id="L418">		level++;</span>
+<span class="fc" id="L419">		globalPunct += punct;</span>
+<span class="fc" id="L420">		punct = 100;</span>
+<span class="pc bpc" id="L421" title="1 of 2 branches missed.">		if(level == nlevels+1) {</span>
+<span class="nc" id="L422">			globalPunct /= nlevels;</span>
+<span class="nc" id="L423">			punctua = new GLabel(String.valueOf(aux), WIDTH/2.0+200.0, HEIGHT/2.0-98.0);</span>
+<span class="nc" id="L424">			punctua.setFont(ARIA);</span>
+<span class="nc" id="L425">			add(punctua);</span>
+
+<span class="nc" id="L427">			punctua = new GLabel(String.valueOf(globalPunct),WIDTH/2.0+100.0,HEIGHT/2.0);</span>
+<span class="nc" id="L428">			punctua.setFont(ARIA);</span>
+<span class="nc" id="L429">			add(punctua);</span>
+<span class="nc" id="L430">			finalWinSlide();</span>
+<span class="nc" id="L431">		}</span>
+		else {
+<span class="fc" id="L433">			globalPunctAux = globalPunct/(level-1);</span>
+<span class="fc" id="L434">			punctua = new GLabel(String.valueOf(aux), WIDTH/2.0+200.0, HEIGHT/2.0-98.0);</span>
+<span class="fc" id="L435">			punctua.setFont(ARIA);</span>
+<span class="fc" id="L436">			add(punctua);</span>
+<span class="fc" id="L437">			runWin();</span>
+		}
+<span class="fc" id="L439">	}</span>
+
+	void levelPassed() {
+<span class="pc bpc" id="L442" title="1 of 2 branches missed.">		if(lvl.carwin()) {</span>
+<span class="pc" id="L443">			handleLevelpassed();}}</span>
+
+	private void menu() {
+
+<span class="fc" id="L447">		backgroundGrey = new GImage(PATH + &quot;grey.jpg&quot;);</span>
+<span class="fc" id="L448">		backgroundGrey.setSize(WIDTH+100.0, HEIGHT+100.0);</span>
+<span class="fc" id="L449">		backgroundGrey.sendToBack();</span>
+<span class="fc" id="L450">		add(backgroundGrey);</span>
+
+<span class="fc" id="L452">		tittle = new GImage(PATH + &quot;tittle.png&quot;);</span>
+<span class="fc" id="L453">		tittle.setSize(220,100);</span>
+<span class="fc" id="L454">		tittle.setLocation(250, 50);</span>
+<span class="fc" id="L455">		add(tittle);</span>
+
+<span class="fc" id="L457">		imgPlay = new GImage(PATH + GREY);</span>
+<span class="fc" id="L458">		imgPlay.setSize(150, 75);</span>
+<span class="fc" id="L459">		imgPlay.setLocation(275, HEIGHT/2.0-100.0);</span>
+<span class="fc" id="L460">		play = new GLabel(&quot;Play&quot;,imgPlay.getX()+37,imgPlay.getY()+45);</span>
+<span class="fc" id="L461">		play.setFont(ARIA);</span>
+
+<span class="fc" id="L463">		add(imgPlay);</span>
+<span class="fc" id="L464">		add(play);</span>
+
+<span class="fc" id="L466">		imgExit = new GImage(PATH + GREY);</span>
+<span class="fc" id="L467">		imgExit.setSize(150, 75);</span>
+<span class="fc" id="L468">		imgExit.setLocation(275, HEIGHT/2.0+100.0);</span>
+<span class="fc" id="L469">		exit = new GLabel(&quot;Exit&quot;,imgExit.getX()+43,imgExit.getY()+45);</span>
+<span class="fc" id="L470">		exit.setFont(ARIA);</span>
+<span class="fc" id="L471">		add(imgExit);</span>
+<span class="fc" id="L472">		add(exit);</span>
+
+<span class="fc" id="L474">		imgLoad = new GImage(PATH + GREY);</span>
+<span class="fc" id="L475">		imgLoad.setSize(150, 75);</span>
+<span class="fc" id="L476">		imgLoad.setLocation(275, HEIGHT/2.0);</span>
+<span class="fc" id="L477">		load = new GLabel(&quot;Load&quot;,imgLoad.getX()+35,imgLoad.getY()+45);</span>
+<span class="fc" id="L478">		load.setFont(ARIA);</span>
+
+<span class="fc" id="L480">		add(imgLoad);</span>
+<span class="fc" id="L481">		add(load);</span>
+
+<span class="fc" id="L483">	}</span>
+
+	private void winSlide() {
+
+<span class="fc" id="L487">		imgPlay = new GImage(PATH + GREY);</span>
+
+<span class="fc" id="L489">		imgPlay.setLocation(275, HEIGHT/2.0-25);</span>
+<span class="fc" id="L490">		play = new GLabel(&quot;Continue&quot;,imgPlay.getX()+5,imgPlay.getY()+45);</span>
+<span class="fc" id="L491">		play.setFont(ARIA);</span>
+
+<span class="fc" id="L493">		add(imgPlay);</span>
+<span class="fc" id="L494">		add(play);</span>
+
+<span class="fc" id="L496">		imgExit = new GImage(PATH + GREY);</span>
+<span class="fc" id="L497">		imgExit.setLocation(275, HEIGHT/2.0+75);</span>
+<span class="fc" id="L498">		exit = new GLabel(&quot;Exit&quot;,imgExit.getX()+45,imgExit.getY()+45);</span>
+<span class="fc" id="L499">		exit.setFont(ARIA);</span>
+
+<span class="fc" id="L501">		add(imgExit);</span>
+<span class="fc" id="L502">		add(exit);</span>
+
+<span class="fc" id="L504">		win = new GLabel(&quot;Congratulations, You Win!&quot;,WIDTH/2.0-150.0, HEIGHT/2.0-200.0);</span>
+<span class="fc" id="L505">		win.setFont(ARIA);</span>
+<span class="fc" id="L506">		add(win);</span>
+<span class="fc" id="L507">		win = new GLabel(&quot;These are your points: &quot;, WIDTH/2.0-145.0, HEIGHT/2.0-100.0);</span>
+<span class="fc" id="L508">		win.setFont(ARIA);</span>
+<span class="fc" id="L509">		add(win);</span>
+
+<span class="fc" id="L511">		dog = new GImage(PATH + &quot;dog.png&quot;);</span>
+<span class="fc" id="L512">		dog.setSize(223.6,178.4);</span>
+<span class="fc" id="L513">		dog.setLocation(235, HEIGHT/2.0+145.0);</span>
+<span class="fc" id="L514">		add(dog);</span>
+
+<span class="fc" id="L516">	}</span>
+
+	void finalWinSlide() {
+
+<span class="fc" id="L520">		imgExit = new GImage(PATH + GREY);</span>
+<span class="fc" id="L521">		imgExit.setLocation(275, HEIGHT/2.0+50.0);</span>
+<span class="fc" id="L522">		exit = new GLabel(&quot;Exit&quot;,imgExit.getX()+45,imgExit.getY()+45);</span>
+<span class="fc" id="L523">		exit.setFont(ARIA);</span>
+<span class="fc" id="L524">		add(imgExit);</span>
+<span class="fc" id="L525">		add(exit);</span>
+
+<span class="fc" id="L527">		win = new GLabel(&quot;Congratulations, You Win!&quot;,WIDTH/2.0-150.0,HEIGHT/2.0-200.0);</span>
+<span class="fc" id="L528">		win.setFont(ARIA);</span>
+<span class="fc" id="L529">		add(win);</span>
+<span class="fc" id="L530">		win = new GLabel(&quot;These are your points: &quot;, WIDTH/2.0-145.0,HEIGHT/2.0-100.0);</span>
+<span class="fc" id="L531">		win.setFont(ARIA);</span>
+<span class="fc" id="L532">		add(win);</span>
+<span class="fc" id="L533">		win = new GLabel(&quot;Global: &quot;, WIDTH/2.0-50.0,HEIGHT/2.0);</span>
+<span class="fc" id="L534">		win.setFont(ARIA);</span>
+
+<span class="fc" id="L536">		add(win);</span>
+<span class="fc" id="L537">		add(dog);</span>
+<span class="fc" id="L538">	}</span>
+
+	private void drawCar(Vehicle veh) {
+		GImage car;
+<span class="fc bfc" id="L542" title="All 2 branches covered.">		if (!veh.isVertical()) {</span>
+<span class="fc" id="L543">			vehN = PATH + veh.getVehicleModel().toString() + &quot;.png&quot;;</span>
+<span class="fc" id="L544">			car = new GImage(vehN,getIniX(veh),getIniY(veh));</span>
+<span class="fc bfc" id="L545" title="All 2 branches covered.">			if (veh.getVehicleModel() == VehicleModel.TRUCK) {</span>
+<span class="fc" id="L546">				car.setSize(boxWid() * 3, boxHei());</span>
+<span class="fc" id="L547">			}</span>
+			else
+<span class="fc" id="L549">				car.setSize(boxWid() * 2, boxHei());</span>
+<span class="fc" id="L550">		}</span>
+		else {
+<span class="fc" id="L552">			vehN = PATH + veh.getVehicleModel().toString() + &quot;_vert.png&quot;;</span>
+<span class="fc" id="L553">			car = new GImage(vehN,getIniX(veh),getIniY(veh));</span>
+<span class="fc bfc" id="L554" title="All 2 branches covered.">			if (veh.getVehicleModel() == VehicleModel.TRUCK) {</span>
+<span class="fc" id="L555">				car.setSize(boxWid(), boxHei() * 3);</span>
+<span class="fc" id="L556">			}</span>
+			else
+<span class="fc" id="L558">				car.setSize(boxWid(), boxHei() * 2);</span>
+		}
+<span class="fc" id="L560">		add(car);</span>
+<span class="fc" id="L561">	}</span>
+
+	public static void main(String[] args) {
+<span class="nc" id="L564">		new Game().start();}</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

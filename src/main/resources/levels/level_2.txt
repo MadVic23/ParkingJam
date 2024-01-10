@@ -1,0 +1,10 @@
+Level 2
+8 8
+++++++++
++a  ttt+
++a  b u+
++** bgu@
++sss gu+
++  d ff+
++ccdee +
+++++++++

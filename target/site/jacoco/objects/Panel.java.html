@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Panel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">parkin-jam</a> &gt; <a href="index.source.html" class="el_package">objects</a> &gt; <span class="el_source">Panel.java</span></div><h1>Panel.java</h1><pre class="source lang-java linenums">package objects;
+import java.util.*;
+import java.io.Serializable;
+
+public class Panel implements Serializable {
+
+	private int numRows;
+	private int numCols;
+<span class="fc" id="L9">	private ArrayList&lt;Vehicle&gt; addV = new ArrayList&lt;&gt;();</span>
+	private Vehicle[][] panel1;
+	private Vehicle v;
+
+<span class="fc" id="L13">	public Panel(int rows, int cols) </span>
+	{
+<span class="fc" id="L15">		this.numRows = rows;</span>
+<span class="fc" id="L16">		this.numCols = cols;</span>
+<span class="fc" id="L17">		panel1 = new Vehicle[rows][cols];</span>
+<span class="fc" id="L18">		v = new Vehicle();</span>
+<span class="fc" id="L19">	}</span>
+
+
+	public int getNumCols() 
+	{
+<span class="fc" id="L24">		return numCols; </span>
+	}
+
+	public void setNumCols(int cols)
+	{
+<span class="fc" id="L29">		this.numCols = cols;</span>
+<span class="fc" id="L30">	}</span>
+
+
+	public int getNumRows() 
+	{
+<span class="fc" id="L35">		return numRows; </span>
+	}
+
+	public void setNumRows(int rows)
+	{
+<span class="fc" id="L40">		this.numRows = rows;</span>
+<span class="fc" id="L41">	}</span>
+
+	public boolean isVehicleOnSpace(Box space) 
+	{
+<span class="fc" id="L45">		boolean res = true;</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">		if (panel1[space.getRow()][space.getCol()] != null) {</span>
+<span class="fc" id="L47">			return res;</span>
+		}
+<span class="fc" id="L49">		res = false;</span>
+<span class="fc" id="L50">		return res;</span>
+	}
+
+	public List&lt;Vehicle&gt; getVehicleOnPanel()
+	{
+<span class="fc" id="L55">		return addV;</span>
+	}
+
+	public void setVehicleOnPanel(List&lt;Vehicle&gt; l) {
+<span class="fc" id="L59">		addV = (ArrayList&lt;Vehicle&gt;) l;</span>
+
+<span class="fc" id="L61">	}</span>
+
+	public Vehicle getVehicle(Box s) 
+	{
+<span class="fc bfc" id="L65" title="All 2 branches covered.">		if (panel1[s.getRow()][s.getCol()] != null)</span>
+		{
+<span class="fc" id="L67">			return panel1[s.getRow()][s.getCol()];</span>
+		}
+<span class="fc" id="L69">		return null;	</span>
+	}
+
+	public VehicleModel getVehicleModel() 
+	{
+<span class="fc" id="L74">		return v.getVehicleModel();</span>
+	}
+
+
+
+	public void addVehicle(VehicleModel model, int startRow, int startCol, int length, boolean vert) 
+	{
+<span class="fc" id="L81">		Vehicle tempVehicle = new Vehicle(model, startRow, startCol, length,vert);</span>
+<span class="fc" id="L82">		Box[] tempArray = tempVehicle.boxesOccupied();</span>
+
+<span class="fc bfc" id="L84" title="All 2 branches covered.">		for (int i = 0; i &lt; tempVehicle.getLength();i++ )</span>
+		{
+<span class="pc bpc" id="L86" title="4 of 8 branches missed.">			if (tempArray[i].getRow() &lt; 0 || tempArray[i].getRow() &gt;= numRows || tempArray[i].getCol() &lt; 0 || tempArray[i].getCol() &gt;= numCols)</span>
+			{
+<span class="nc" id="L88">				return;</span>
+			}
+<span class="fc" id="L90">			tempArray[i] = new Box( tempVehicle.boxesOccupied()[i].getRow(),tempVehicle.boxesOccupied()[i].getCol());</span>
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">			if (isVehicleOnSpace(tempArray[i])) {</span>
+<span class="nc" id="L92">				return;</span>
+			}
+		}
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		for (int i = 0; i &lt; tempVehicle.getLength(); i++) {</span>
+<span class="fc" id="L96">			panel1[tempVehicle.boxesOccupied()[i].getRow()][tempVehicle.boxesOccupied()[i].getCol()] = tempVehicle;</span>
+		}	
+<span class="fc" id="L98">		addV.add(tempVehicle); </span>
+<span class="fc" id="L99">	}</span>
+
+
+	public boolean moveBoxes(Box start, int numSpaces) {
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">		if (possibleMoveBoxes(start, numSpaces))</span>
+		{
+<span class="fc" id="L105">			Vehicle moveVehicle = getVehicle(start);</span>
+<span class="fc" id="L106">			Box[] spaceVehicle = moveVehicle.boxesOccupied();</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">			for (int i = 0; i &lt; moveVehicle.boxesOccupied().length; i++)</span>
+			{
+<span class="fc" id="L109">				panel1[spaceVehicle[i].getRow()][spaceVehicle[i].getCol()] = null;</span>
+			}
+
+<span class="fc" id="L112">			moveVehicle.move(numSpaces);</span>
+<span class="fc" id="L113">			addVehicle(moveVehicle.getVehicleModel(), moveVehicle.getStartRow(), moveVehicle.getStartCol(), moveVehicle.getLength(), moveVehicle.isVertical());</span>
+<span class="fc" id="L114">			addV.remove(addV.indexOf(getVehicle(start)));</span>
+
+
+<span class="fc" id="L117">			return true;</span>
+		}
+<span class="nc" id="L119">		return false;</span>
+	}
+
+
+	public boolean possibleMoveBoxes(Box start, int numSpaces) {
+
+<span class="fc" id="L125">		Vehicle canMoveCar = getVehicle(start);</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">		if (canMoveCar == null) </span>
+		{
+<span class="fc" id="L128">			return false;</span>
+		}
+<span class="fc" id="L130">		Box[] spaceOnTrail = canMoveCar.boxesOccup(numSpaces);</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">		for (int i = 0; i &lt; Math.abs(numSpaces); i++)</span>
+		{
+<span class="pc bpc" id="L133" title="4 of 8 branches missed.">			if (spaceOnTrail[i].getRow() &lt; 0 || spaceOnTrail[i].getRow() &gt;= numRows || spaceOnTrail[i].getCol() &lt; 0 || spaceOnTrail[i].getCol() &gt;= numCols) </span>
+			{
+<span class="nc" id="L135">				return false;</span>
+			}
+<span class="fc bfc" id="L137" title="All 2 branches covered.">			if (isVehicleOnSpace(spaceOnTrail[i]))</span>
+			{
+<span class="fc" id="L139">				return false;</span>
+			}
+		}
+<span class="fc" id="L142">		return true;</span>
+	}
+
+
+	public Vehicle getV() {
+<span class="fc" id="L147">		return v;</span>
+	}
+
+
+	public void setV(Vehicle v) {
+<span class="fc" id="L152">		this.v = v;</span>
+<span class="fc" id="L153">	}</span>
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

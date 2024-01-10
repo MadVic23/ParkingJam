@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="10.9.3">
+<file name="C:\Users\Salma\eclipse-workspace\parking-jam\src\main\java\objects\Box.java">
+</file>
+<file name="C:\Users\Salma\eclipse-workspace\parking-jam\src\main\java\objects\Vehicle.java">
+</file>
+<file name="C:\Users\Salma\eclipse-workspace\parking-jam\src\main\java\Game.java">
+</file>
+<file name="C:\Users\Salma\eclipse-workspace\parking-jam\src\main\java\objects\VehicleModel.java">
+</file>
+<file name="C:\Users\Salma\eclipse-workspace\parking-jam\src\main\java\objects\Level.java">
+</file>
+<file name="C:\Users\Salma\eclipse-workspace\parking-jam\src\main\java\objects\Panel.java">
+</file>
+</checkstyle>

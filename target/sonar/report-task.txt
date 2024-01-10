@@ -1,0 +1,6 @@
+projectKey=es.upm.pproject.parkingjam:parking-jam:parkin-jam-200210:200210
+serverUrl=https://costa.ls.fi.upm.es/sonar
+serverVersion=9.6.1.59531
+dashboardUrl=https://costa.ls.fi.upm.es/sonar/dashboard?id=es.upm.pproject.parkingjam%3Aparking-jam%3Aparkin-jam-200210%3A200210
+ceTaskId=AYlWS1nfl7JJzKu2sDl3
+ceTaskUrl=https://costa.ls.fi.upm.es/sonar/api/ce/task?id=AYlWS1nfl7JJzKu2sDl3

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Vehicle.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">parkin-jam</a> &gt; <a href="index.source.html" class="el_package">objects</a> &gt; <span class="el_source">Vehicle.java</span></div><h1>Vehicle.java</h1><pre class="source lang-java linenums">package objects;
+
+import java.io.Serializable; 
+public class Vehicle implements Serializable {
+
+	VehicleModel model;
+	Box start;
+	int length;
+	boolean isVertical;
+
+
+<span class="fc" id="L12">	public Vehicle(VehicleModel model, int startRow, int startCol, int length, boolean isVertical) {</span>
+<span class="fc" id="L13">		this.model = model;</span>
+<span class="fc" id="L14">		start = new Box(startRow, startCol);</span>
+<span class="fc" id="L15">		this.length = length;</span>
+<span class="fc" id="L16">		this.isVertical = isVertical;</span>
+<span class="fc" id="L17">	}</span>
+
+
+<span class="fc" id="L20">	public Vehicle() {</span>
+<span class="fc" id="L21">	}</span>
+
+
+	public Box getStart() {
+<span class="fc" id="L25">		return this.start;</span>
+	}
+
+
+	public int getStartRow() {
+<span class="fc" id="L30">		return this.start.getRow();</span>
+	}
+
+
+	public int getStartCol() {
+<span class="fc" id="L35">		return this.start.getCol();</span>
+	}
+
+
+	public int getLength() {
+<span class="fc" id="L40">		return this.length;</span>
+	}
+
+
+	public boolean isVertical() {
+<span class="fc" id="L45">		return this.isVertical;</span>
+	}
+
+
+	public void setStartRow(int newRow) {
+<span class="fc" id="L50">		this.start.setRow(newRow);</span>
+<span class="fc" id="L51">	}</span>
+
+
+	public void setStartCol(int newCol) {
+<span class="fc" id="L55">		this.start.setCol(newCol);</span>
+<span class="fc" id="L56">	}</span>
+
+
+	public VehicleModel getVehicleModel() {
+<span class="fc" id="L60">		return this.model;</span>
+	}
+
+
+
+	public Box[] boxesOccup(int numBoxes) {
+		Box[] boxesOccupied;
+<span class="fc" id="L67">		boxesOccupied = new Box[Math.abs(numBoxes)];</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">		if (numBoxes &lt; 0) {</span>
+<span class="nc" id="L69">			numBoxes = Math.abs(numBoxes);</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">			if (this.isVertical) {</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">				for (int i = 0; i &lt; numBoxes; i++) {</span>
+<span class="nc" id="L72">					boxesOccupied[i] = new Box(start.getRow() - i - 1, start.getCol());</span>
+				}
+<span class="nc" id="L74">			}</span>
+			else {
+<span class="nc bnc" id="L76" title="All 2 branches missed.">				for (int i = 0; i &lt; numBoxes; i++) {</span>
+<span class="nc" id="L77">					boxesOccupied[i] = new Box(start.getRow(), start.getCol() - i - 1);</span>
+				}
+			}
+
+<span class="nc" id="L81">		}</span>
+		else {
+<span class="fc bfc" id="L83" title="All 2 branches covered.">			if (this.isVertical) {</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">				for (int i = 0; i &lt; numBoxes; i++) {</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">					if (this.length == 3) {</span>
+<span class="fc" id="L86">						boxesOccupied[i] = new Box(start.getRow() + i + 3, start.getCol());</span>
+<span class="fc" id="L87">					}</span>
+					else {
+<span class="fc" id="L89">						boxesOccupied[i] = new Box(start.getRow() + i + 2, start.getCol());</span>
+					}
+				}
+<span class="fc" id="L92">			}</span>
+			else {
+<span class="fc bfc" id="L94" title="All 2 branches covered.">				for (int i = 0; i &lt; numBoxes; i++) {</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">					if (this.length == 3) {</span>
+<span class="nc" id="L96">						boxesOccupied[i] = new Box(start.getRow(), start.getCol() + i + 3);</span>
+<span class="nc" id="L97">					}</span>
+					else {
+<span class="fc" id="L99">						boxesOccupied[i] = new Box(start.getRow(), start.getCol() + i + 2);</span>
+					}
+				}
+			}
+		}
+
+<span class="fc" id="L105">		return boxesOccupied;</span>
+	}
+
+
+	public void move(int numBoxes) {
+<span class="fc bfc" id="L110" title="All 2 branches covered.">		if (this.isVertical) {</span>
+<span class="fc" id="L111">			setStartRow(this.start.getRow() + numBoxes);</span>
+<span class="fc" id="L112">		}</span>
+		else {
+<span class="fc" id="L114">			setStartCol(this.start.getCol() + numBoxes);</span>
+		}
+<span class="fc" id="L116">	}</span>
+
+	public Box[] boxesOccupied() {
+
+<span class="fc" id="L120">		int uno = 1;</span>
+<span class="fc" id="L121">		int cero = 0;</span>
+<span class="fc" id="L122">		int dos = 2;</span>
+		
+		Box[] boxArray;
+<span class="fc bfc" id="L125" title="All 2 branches covered.">		if (this.length == 2) {</span>
+<span class="fc" id="L126">			boxArray = new Box[2];</span>
+<span class="fc" id="L127">		}</span>
+		else {
+<span class="fc" id="L129">			boxArray = new Box[3];</span>
+		}
+<span class="fc" id="L131">		boxArray[0] = start;</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">		if (this.isVertical) {</span>
+<span class="fc" id="L133">			boxArray[uno] = new Box(boxArray[cero].getRow() + 1, boxArray[cero].getCol());</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">			if (this.length == 3) {</span>
+<span class="fc" id="L135">				boxArray[dos] = new Box(boxArray[uno].getRow() + 1, boxArray[uno].getCol());</span>
+			}
+<span class="fc" id="L137">		}</span>
+		else {
+<span class="fc" id="L139">			boxArray[uno] = new Box(boxArray[cero].getRow(), boxArray[cero].getCol() + 1);</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">			if (this.length == 3) {</span>
+<span class="fc" id="L141">				boxArray[dos] = new Box(boxArray[uno].getRow(), boxArray[uno].getCol() + 1);</span>
+			}
+		}
+
+<span class="fc" id="L145">		return boxArray;</span>
+	}
+
+
+	public boolean getVertical() {
+<span class="fc" id="L150">		return isVertical;</span>
+	}
+	
+	public void setVertical(boolean b) {
+<span class="fc" id="L154">		isVertical = b;</span>
+<span class="fc" id="L155">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
